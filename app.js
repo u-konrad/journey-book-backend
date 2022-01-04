@@ -62,8 +62,8 @@ app.use((err, req, res, next) => {
   res.status(statusCode).json({ error: err.message });
 });
 
-app.listen(3001, () => {
-  console.log("Serving on port 3001");
+app.listen(process.env.PORT ||3001, () => {
+  console.log("Serving");
 });
 
 
