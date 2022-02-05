@@ -30,6 +30,8 @@ const convertDeletedFavs = (user, arrayName, itemType) => {
 
 module.exports.register = async (req, res, next) => {
   const { email, username, password } = req.body;
+  const { lang } = req.query;
+
 
   try {
     existingUser = await User.findOne({ username: username });
@@ -65,6 +67,16 @@ module.exports.register = async (req, res, next) => {
     username,
     password: hashedPassword,
   });
+
+  if (lang === "pl") {
+    user.blogTitle = "Mój blog";
+    user.blogDesc = "Blog o moich podróżach";
+    user.about = "Niestrudzony podróżnik";
+  } else {
+    user.blogTitle = "My blog";
+    user.blogDesc = "Blog about my journeys";
+    user.about = "Tireless traveller";
+  }
 
   try {
     await user.save();
