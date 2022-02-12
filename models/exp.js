@@ -22,6 +22,7 @@ const ExpSchema = new Schema({
   rating: Number,
   category: String,
   image: ImageSchema,
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 
 ExpSchema.index({ title: "text", location: "text" });

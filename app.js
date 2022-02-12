@@ -8,6 +8,7 @@ const helmet = require('helmet')
 const userRoutes = require("./routes/user-routes");
 const itemRoutes = require("./routes/item-routes");
 const favRoutes = require("./routes/fav-routes");
+const commentRoutes = require('./routes/comment-routes')
 
 mongoose
   .connect(
@@ -50,6 +51,7 @@ app.use(function (req, res, next) {
 app.use("/users", userRoutes);
 app.use("/items", itemRoutes);
 app.use("/favorites", favRoutes);
+app.use("/comments",commentRoutes)
 
 app.all("*", (req, res, next) => {
   console.log('error')

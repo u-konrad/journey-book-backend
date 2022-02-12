@@ -21,6 +21,7 @@ const PostSchema = new Schema({
   },
   image: ImageSchema,
   coordinates: [Number],
+  comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
 
 PostSchema.post("remove", async function (doc) {
