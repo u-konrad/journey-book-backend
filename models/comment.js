@@ -10,7 +10,7 @@ const CommentSchema = new Schema({
   item: {
     type: Schema.Types.ObjectId,
   },
-  content:String
+  content:{ type: String, required: true },
 });
 
 module.exports = mongoose.model("Comment", CommentSchema);

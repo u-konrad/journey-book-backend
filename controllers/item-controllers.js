@@ -14,11 +14,11 @@ module.exports.getItemById = async (req, res, next) => {
 
   let item;
   if (itemType === ItemTypes.JOURNEYS) {
-    item = await Journey.findById(itemId).populate(["posts", "exps"]);
+    item = await Journey.findById(itemId).populate(["posts", "exps","comments"]);
   } else if (itemType === ItemTypes.POSTS) {
-    item = await Post.findById(itemId).populate("journey");
+    item = await Post.findById(itemId).populate(["journey","comments"]);
   } else if (itemType === ItemTypes.EXPS) {
-    item = await Exp.findById(itemId).populate("journey");
+    item = await Exp.findById(itemId).populate(["journey","comments"]);
   } else {
     const error = new ExpressError("Missing or wrong item type.", 400);
     return next(error);
