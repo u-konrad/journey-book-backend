@@ -19,9 +19,21 @@ module.exports.getCommentsById = async (req, res, next) => {
       },
     });
   } else if (itemType === ItemTypes.POSTS) {
-    item = await Post.findById(itemId).populate("comments");
+    item = await Post.findById(itemId).populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        select: ["username", "_id"],
+      },
+    });
   } else if (itemType === ItemTypes.EXPS) {
-    item = await Exp.findById(itemId).populate("comments");
+    item = await Exp.findById(itemId).populate({
+      path: "comments",
+      populate: {
+        path: "author",
+        select: ["username", "_id"],
+      },
+    });
   } else {
     const error = new ExpressError("Missing or wrong item type.", 400);
     return next(error);

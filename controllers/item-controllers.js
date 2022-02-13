@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Journey = require("../models/journey");
 const Post = require("../models/post");
 const Exp = require("../models/exp");
+const Comment =require('../models/comment')
 
 const ExpressError = require("../utils/ExpressError");
 const ItemTypes = require("./item-types");
@@ -14,11 +15,15 @@ module.exports.getItemById = async (req, res, next) => {
 
   let item;
   if (itemType === ItemTypes.JOURNEYS) {
-    item = await Journey.findById(itemId).populate(["posts", "exps","comments"]);
+    item = await Journey.findById(itemId).populate([
+      "posts",
+      "exps",
+      "comments",
+    ]);
   } else if (itemType === ItemTypes.POSTS) {
-    item = await Post.findById(itemId).populate(["journey","comments"]);
+    item = await Post.findById(itemId).populate(["journey", "comments"]);
   } else if (itemType === ItemTypes.EXPS) {
-    item = await Exp.findById(itemId).populate(["journey","comments"]);
+    item = await Exp.findById(itemId).populate(["journey", "comments"]);
   } else {
     const error = new ExpressError("Missing or wrong item type.", 400);
     return next(error);
@@ -281,6 +286,10 @@ module.exports.deleteItem = async (req, res, next) => {
       images.forEach(async (filename) => {
         await cloudinary.uploader.destroy(filename);
       });
+    }
+    if (item.comments) {
+      const { comments } = item;
+      await Comment.deleteMany({ _id: { $in: comments } });
     }
     await item.remove();
   } catch (err) {
