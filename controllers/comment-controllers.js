@@ -41,7 +41,6 @@ module.exports.addNewComment = async (req, res, next) => {
   const { itemId } = req.params;
   const itemType = req.query.type;
 
-  console.log(req.body);
 
   const comment = { ...req.body };
   const newComment = await new Comment({
@@ -84,4 +83,56 @@ module.exports.addNewComment = async (req, res, next) => {
   }
 
   return res.status(201).json({ comment: newComment });
+};
+
+module.exports.deleteComment = async (req, res, next) => {
+  const  comment  = req.body;
+  const { userId } = req.userData;
+  const { itemId: commentId } = req.params;
+
+
+  const { authorId, parentId, parentType } = comment;
+
+  if (authorId !== userId) {
+    const error = new ExpressError(
+      "You are not authorized to delete this comment.",
+      403
+    );
+    return next(error);
+  }
+
+  try {
+    const commentToRemove = await Comment.findByIdAndDelete(commentId);
+  } catch (err) {
+    const error = new ExpressError(
+      "Something went wrong, could not delete item.",
+      500
+    );
+    return next(error);
+  }
+
+  let parent;
+  if (parentType === ItemTypes.JOURNEYS) {
+    parent = await Journey.findByIdAndUpdate(parentId, {
+      $pull: { comments: commentId },
+    });
+  } else if (parentType === ItemTypes.POSTS) {
+    parent = await Post.findByIdAndUpdate(parentId, {
+      $pull: { comments: commentId },
+    });
+  } else if (parentType === ItemTypes.EXPS) {
+    parent = await Exp.findByIdAndUpdate(parentId, {
+      $pull: { comments: commentId },
+    });
+  } else {
+    const error = new ExpressError("Missing or wrong parent type.", 400);
+    return next(error);
+  }
+
+  if (!parent) {
+    const error = new ExpressError("Could not find parent for this id.", 404);
+    return next(error);
+  }
+
+  return res.status(200).json({ msg: "Successfully deleted" });
 };
