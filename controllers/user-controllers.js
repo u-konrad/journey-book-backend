@@ -31,7 +31,7 @@ const convertDeletedFavs = (user, arrayName, itemType) => {
 module.exports.register = async (req, res, next) => {
   const { email, username, password } = req.body;
   const { lang } = req.query;
-
+ let existingUser;
 
   try {
     existingUser = await User.findOne({ username: username });

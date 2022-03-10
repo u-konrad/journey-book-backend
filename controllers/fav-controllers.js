@@ -54,7 +54,7 @@ module.exports.addItemToFavs = async (req, res, next) => {
     return next(error);
   }
 
-  item = { item: itemId, added: Date.now() };
+ let item = { item: itemId, added: Date.now() };
   const arrayName = "fav" + itemType[0].toUpperCase() + itemType.slice(1) + "s";
   if (user[arrayName].find((el) => el.item === itemId)) {
     const error = new ExpressError("Item is already in favorites.", 403);
